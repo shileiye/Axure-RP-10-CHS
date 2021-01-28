@@ -1,8 +1,8 @@
 --------------------关于语言-------------------
 Axure RP 10 简体中文汉化语言包
-汉化版本：V1.0
-支持版本：Axure RP 10 for 3812
-汉化时间：2021年01月27日
+汉化版本：V1.1
+支持版本：Axure RP 10 for 3813
+汉化时间：2021年01月28日
 开源网站：https://github.com/shileiye/Axure-RP-10-CHS
 汉化声明：基于Pluwen发布的Axure RP 9中文语言包整理补全，感谢小楼老师及曾经为该汉化贡献的朋友们！欢迎大家过来贡献翻译，保持该软件的持续更新！
 -----------------------------------------------
@@ -2939,9 +2939,9 @@ Axure RP 10 简体中文汉化语言包
 "Zoom All" :: "全部缩放"
 "ZOOM" :: "缩放"
 "Zoom" :: "缩放"
-"Components" :: "组件库"
-"Add Component" :: "添加组件"
-"Components can be reused across\nyour project. Edit once and see your\nchanges everywhere." :: "组件可以在您的项目中\n重复使用。编辑一次，即可\n在任何地方看到您的更改。"
+"Components" :: "母版"
+"Add Component" :: "添加母版"
+"Components can be reused across\n\ryour project. Edit once and see your\n\rchanges everywhere." :: "组件可以在您的项目中\n重复使用。编辑一次，即可\n在任何地方看到您的更改。"
 "Customize Main Toolbar..." :: "自定义主工具栏"
 "Select items to customize the main toolbar" :: "选择项目以自定义主工具栏"
 "Selection" :: "选择"
@@ -2961,4 +2961,4 @@ Axure RP 10 简体中文汉化语言包
 "Assign Widget" :: "选择元件"
 "Solid Color" :: "纯色"
 "Set image" :: "设置图片"
-"COLOR S&PACE" :: "颜色选择器"
+"COLOR &SPACE" :: "颜色选择器"
