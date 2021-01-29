@@ -25,3 +25,11 @@
 
 ### 【申明】
 软件通用汉化语言文件基于Pluwen发布的Axure RP 9中文语言包整理补全，感谢小楼老师及曾经为该汉化贡献的朋友们！欢迎大家过来贡献翻译，保持该软件汉化的持续更新！
+
+### 【截图演示】
+[![软件界面汉化截图](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/%E8%BD%AF%E4%BB%B6%E6%88%AA%E5%9B%BE.png "软件界面汉化截图")](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/%E8%BD%AF%E4%BB%B6%E6%88%AA%E5%9B%BE.png "软件界面汉化截图")
+
+[![网页界面汉化截图](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/%E7%BD%91%E9%A1%B5%E6%BC%94%E7%A4%BA%E6%88%AA%E5%9B%BE.png "网页界面汉化截图")](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/%E7%BD%91%E9%A1%B5%E6%BC%94%E7%A4%BA%E6%88%AA%E5%9B%BE.png "网页界面汉化截图")
+
+### 【Axure RP 10 Beta 官方简介（机翻）】
+[![Axure RP 10 Beta 官方简介（机翻）](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/Axure%20RP%2010%E4%BB%8B%E7%BB%8D.png "Axure RP 10 Beta 官方简介（机翻）")](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/Axure%20RP%2010%E4%BB%8B%E7%BB%8D.png "Axure RP 10 Beta 官方简介（机翻）")
