@@ -1093,37 +1093,6 @@ var toolBarOnly = true;
         }
     }
 
-    var userAcct = {
-        userId: '',
-        userName: '',
-        userEmail: '',
-        userProfileImg: '',
-        isUsingAxureAcct: false,
-    }
-
-    var authCookieValue = null;
-    var userCookieValue = null;
-    var isSubInstance = false;
-    //var readOnlyMode = false;
-    //var readOnlyMessage = '';
-
-    // Watermark hints
-    // NOTE: The trailing characters serve to be a distinguishing element in case the user actually does use text similar to the hint.
-    var emailHint = "Email               ";
-    var passHint = "Password             ";
-
-    var feedbackServiceUrl = (window.AXSHARE_HOST_SECURE_URL || 'https://share.axure.com') + '/issue';
-    // Look at creating a new location to have GetShareStatus(FbEnabled replacement) and SafariAuth since they are more general calls that are not solely for feedback now
-    //var prototypeControlUrl = (window.AXSHARE_HOST_SECURE_URL || 'https://share.axure.com') + '/prototype';
-
-    // Checks if the browser is Safari 3.0+
-    // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-    function isSafari() {
-        // Safari 3.0+ "[object HTMLElementConstructor]" 
-        var liveSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
-        return liveSafari || SAFARI || (IOS && $axure.utils.isShareApp());
-    };
-
     var iosInnerHeight = (function () {
         if (!navigator.userAgent.match(/iphone|ipod|ipad/i)) {
             /**
@@ -1179,265 +1148,6 @@ var toolBarOnly = true;
             return dims.w;
         };
     }());
-
-    function includeTokens(ajaxData, excludeUser) {
-        //If the authCookieValue is set (a password-protected local prototype), then send the
-        //token as well (because cookies don't always get sent to external domains)
-        if (authCookieValue) {
-            $.extend(ajaxData, { token: authCookieValue });
-        }
-        if (!excludeUser && userCookieValue) {
-            $.extend(ajaxData, { utoken: userCookieValue });
-        }
-    }
-
-    function setUserLoggedInStatus(response, safariAuthResponseProfile) {
-        if (!response.success) {
-            userAcct.isUsingAxureAcct = false;
-        } else {
-            if (safariAuthResponseProfile) response = safariAuthResponseProfile;
-            userAcct.userId = response.userId;
-            if (safariAuthResponseProfile) 
-                userAcct.userName = response.username == null || response.username.trim() === '' ? response.userEmail : response.username.trim();
-            else
-                userAcct.userName = response.nickname == null || response.nickname.trim() === '' ? response.userEmail : response.nickname.trim();
-            userAcct.userEmail = response.userEmail;
-            userAcct.userProfileImg = response.profileImageUrl;
-            userAcct.isUsingAxureAcct = true;
-
-            if (response.authToken != null) {
-                $axshare.setAuthCookie(response.authToken);
-                userCookieValue = response.authToken;
-            }
-        }
-
-        // If feedback is loaded, update feedback with new account information
-        if (typeof feedback !== 'undefined') feedback.updateUserAccountInfo(userAcct, authCookieValue, userCookieValue);
-    }
-
-    // TODO: for on prem, we need to use an ajax call directly to share instead of accounts
-    // Verify authentication against axure accounts
-    $axure.player.axureAuth = function axureAuth(callback) {
-        if (window.$axshare != null) {
-            $axshare.auth(function (response) {
-                if (response.success) {
-                    setUserLoggedInStatus(response);
-                } else {
-                    if (isSafari()) {
-                        var ajaxData = {
-                            userId: userAcct.isUsingAxureAcct ? userAcct.userId : ""
-                        };
-                        includeTokens(ajaxData);
-
-                        $.ajax({
-                            type: 'GET',
-                            url: feedbackServiceUrl + '/safariAuth',
-                            data: ajaxData,
-                            success: function (response) {
-                                if (!response.success) {
-                                    setUserLoggedInStatus(response);
-                                } else {
-                                    setUserLoggedInStatus(response, response.data.profile[userAcct.userId]);
-
-                                    if (callback != null) {
-                                        callback(response);
-                                    }
-                                }
-                            },
-                            dataType: 'jsonp'
-                        });
-                    } else {
-                        setUserLoggedInStatus(response);
-                    }
-                }
-
-                if (callback != null) {
-                    callback(response);
-                }
-
-            });
-        }
-    }
-
-    // TODO: for on prem, we need to use an ajax call directly to share instead of accounts
-    // Log into axure accounts
-    $axure.player.axureLogin = function axureLogin(email, password, success, failure, saml) {
-        if (window.$axshare != null) {
-            password = password === passHint ? "" : password;
-            $axshare.login(email, password, false, function (response) {
-                if (response.redirecturl !== "" && response.redirecturl != null) {
-                    saml(response);
-                    return;
-                }
-
-                if (response.success && (response.verified || isSubInstance)) {
-                    if (isSafari()) setUserLoggedInStatus(response);
-                    $axure.player.axureAuth(success);
-                } else {
-                    failure(response);
-                }
-            }, window.ON_PREM_LDAP_ENABLED);
-        } else {
-            failure();
-        }
-    }
-
-    function playerLogout() {
-        userAcct.isUsingAxureAcct = false;
-        userAcct.userId = '';
-        userAcct.userProfileImg = '';
-
-        // If feedback is loaded, update feedback with new account information
-        if (typeof feedback !== 'undefined') feedback.updateUserAccountInfo(userAcct);
-    }
-
-    $axure.player.logout = function (feedbackLogout) {
-        var completeLogout = playerLogout;
-        if (feedbackLogout) {
-            completeLogout = function () {
-                feedbackLogout();
-                playerLogout();
-            }
-        }
-        if (window.$axshare != null) {
-            $axshare.logout(completeLogout);
-        } else {
-            completeLogout();
-        }
-    }
-
-    /*
-    * TODO: Start of Login/Account Mgmt UI, which will need to be updated (currenly uses feedback9.css often)
-    */
-    function buildAccountLoginPopup() {
-        return [
-            '<div class="axClearMsgBubble_Player axureLoginBubble_Player">',
-            '   <div class="axureLoginBubbleContainer_Player">',
-            '       <span style="font-weight: bold; font-size: 10px;">登录您的Axure云帐户</span>',
-            '       <input type="text" autocapitalize="none" name="email" class="axureEmail" style="margin-top: 7px;"/>',
-            '       <input name="password" autocapitalize="none" class="axurePassword" />',
-            '       <div class="feedbackGreenBtn_Player">登录</div>',
-            '       <div class="errorMessage"></div>',
-            '       <div id="playerSignUpLink" style="text-align: right; margin-top: 5px; font-size: 10px;">',
-            '           <span>没有账号？<a class="axureSignUpLink" href="', window.AXSHARE_HOST_SECURE_URL, '" target="_blank">注册</a></span>',
-            '       </div>',
-            '   </div>',
-            '</div>'
-        ].join("");
-    }
-
-    // Bind events to axure login speech bubble (watermark, login, errors, click outside)
-    function bindAxureLoginContainerEvent() {
-        var $container = $("#accountLoginContainer");
-        $container.find('input[name="email"]').addClass("watermark").val(emailHint).focus(function () {
-            if ($(this).val() === emailHint) {
-                $(this).removeClass("watermark").val("");
-            }
-        }).blur(function () {
-            if ($(this).val() === "") {
-                $(this).addClass("watermark").val(emailHint);
-            }
-
-            $container.find('.errorMessage').text('');
-            $container.find('.errorMessage').hide();
-        }).keyup(function (event) {
-            if (event.keyCode == 13) {
-                $container.find('.feedbackGreenBtn').click();
-            }
-        });
-        $container.find('input[name="password"]').addClass("watermark").val(passHint).focus(function () {
-            if ($(this).val() === passHint) {
-                $(this).removeClass("watermark").val("");
-                //$(this).removeClass("watermark").val("").attr("type", "password");
-
-                // Note: this might be an issue since jquery doesn't like it. Test in IE
-                $(this)[0].setAttribute('type', 'password');
-            }
-        }).blur(function () {
-            if ($(this).val() === "") {
-                $(this).val(passHint).addClass("watermark");
-                //$(this).val(passHint).addClass("watermark").removeAttr("type");
-
-                // Note: this might be an issue since jquery doesn't like it. Test in IE
-                $(this)[0].setAttribute('type', 'text');
-            }
-
-            $container.find('.errorMessage').text('');
-            $container.find('.errorMessage').hide();
-        }).keyup(function (event) {
-            if (event.keyCode == 13) {
-                $container.find('.feedbackGreenBtn_Player').click();
-            }
-        });
-
-        // Login Submit Event
-        $container.find('.feedbackGreenBtn_Player').click(function (e) {
-            var email = $container.find('.axureEmail').val();
-            var password = $container.find('.axurePassword').val();
-
-            $axure.player.axureLogin(email, password, function (response) {
-                // Success
-                // Clear out fields
-                $container.find('.axureEmail').val(emailHint).addClass("watermark");
-                $container.find('.axurePassword').val(passHint).addClass("watermark");
-                $container.find('.axurePassword')[0].setAttribute('type', 'text');
-
-                closePopup();
-            }, function (response) {
-                // Failure
-                $container.find('.errorMessage').text(response != null && response.message ? response.message : "There was an error connecting to the server, please try again later.");
-                $container.find('.errorMessage').show();
-            }, function (response) {
-                // SAML User
-                $container.find('.errorMessage').empty();
-                $container.find('.errorMessage').append("Please <a class='refreshLink' style='text-decoration: underline;'>refresh</a> this page after logging in via your identity provider.");
-                $container.find('.errorMessage').show();
-
-                window.open(response.redirecturl, '_blank');
-
-                $container.find('.errorMessage').find('.refreshLink').click(function () {
-                    location.reload(true);
-                });
-            });
-        });
-    };
-
-    function initializeSignIn() {
-        if (typeof PREVIEW_INFO === 'undefined' && $axure.player.settings.isAxshare) {
-            (function finishInit() {
-                if (window.$axshare == null || $axshare.auth == null || $axshare.login == null) {
-                    setTimeout(finishInit, 50);
-                } else {
-                    // Call to set readOnlyMode, readOnlyMessage, and isSubinstance (readOnlyMode/Message currently only used for feedback9)
-                    $.ajax({
-                        type: 'GET',
-                        url: feedbackServiceUrl + '/GetShareStatus',
-                        data: {},
-                        success: function (response) {
-                            //readOnlyMode = response.readOnlyMode;
-                            //readOnlyMessage = response.readOnlyMessage;
-                            isSubInstance = response.isSubInstance;
-                            if (isSubInstance) $('#accountLoginContainer').find("#playerSignUpLink").hide();
-
-                            // For now, calling methods to set these values in feedback on start (could later make a general method to retrieve these values from player)
-                            if (typeof feedback !== 'undefined') {
-                                feedback.setReadOnlyModeAndMessage(response.readOnlyMode, response.readOnlyMessage);
-                                feedback.setIsSubInstance(isSubInstance);
-                            }
-                        },
-                        dataType: 'jsonp'
-                    });
-
-                    // Login container
-                    $("#accountLoginContainer").append(buildAccountLoginPopup());
-                    bindAxureLoginContainerEvent();
-
-                    // Attempt to auth and acquire account information, then update top panel
-                    $axure.player.axureAuth();
-                }
-            })();
-        }
-    }
 
     function overflowIsHidden(node) {
         var style = getComputedStyle(node);
@@ -1607,9 +1317,6 @@ var toolBarOnly = true;
             initializePreview();
 
             $axure.player.resizeContent(true);
-
-            // Has timeout to keep waiting to build sign in controls while axAccount is still loading
-            initializeSignIn();
         })();
     });
 
@@ -2368,8 +2075,15 @@ var toolBarOnly = true;
                 }
             } else {
                 if (!$('#separatorContainer').hasClass('hasLeft')) $('#separatorContainer').addClass('hasLeft');
-                host = $('<div id="' + settings.id + '" class="' + panelClass + '"></div>')
-                    .appendTo('#' + hostContainerId);
+                var closeButtonContainer = $('<div class="closeButtonContainer"></div>');
+                var closeButton = $('<button>&#10006;</button>');
+                closeButton.on('click', function () {
+                    $axure.player.pluginClose(settings.id);
+                });
+                closeButton.appendTo(closeButtonContainer);
+                host = $('<div id="' + settings.id + '" class="' + panelClass + '"></div>');
+                closeButtonContainer.appendTo(host);
+                host.appendTo('#' + hostContainerId);
             }
 
             $(('#' + settings.id)).click(function (e) { e.stopPropagation(); });

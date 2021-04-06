@@ -164,7 +164,7 @@
         pageNotesUi += "<div id='traceDiv'></div></div>";
         pageNotesUi += "</div></div>";
 
-        $('#debugHost').html(pageNotesUi);
+        $('#debugHost').append(pageNotesUi);
         $('#traceEmptyState').show();
     }
 

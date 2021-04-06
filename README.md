@@ -3,7 +3,7 @@
 本汉化在Windows10系统中通过测试，可放心使用，仅适用于Axure RP 10！
 
 ### 【文件版本】
-汉化文件版本：Axure RP 10 CHS v1.2.0 for 3816
+汉化文件版本：Axure RP 10 CHS v1.3.0 for 3818
 
 ### 【使用方法】
 1、将汉化压缩包解压缩。
@@ -26,7 +26,7 @@
 4、不定时跟进新版Axure RP 10的汉化，欢迎关注本仓库下载最新版汉化包。
 
 ### 【申明】
-软件通用汉化语言文件基于Pluwen发布的Axure RP 9中文语言包整理补全，感谢小楼老师及曾经为该汉化贡献的朋友们！欢迎大家过来贡献翻译，保持该软件汉化的持续更新！
+软件通用汉化语言文件基于Pluwen发布的Axure RP 10中文语言包整理补全，感谢小楼老师及曾经为该汉化贡献的朋友们！欢迎大家过来贡献翻译，保持该软件汉化的持续更新！
 
 ### 【截图演示】
 [![软件界面汉化截图](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/%E8%BD%AF%E4%BB%B6%E6%88%AA%E5%9B%BE.png "软件界面汉化截图")](https://github.com/shileiye/Axure-RP-10-CHS/blob/main/%E6%BC%94%E7%A4%BA%E5%9B%BE%E7%89%87/%E8%BD%AF%E4%BB%B6%E6%88%AA%E5%9B%BE.png "软件界面汉化截图")

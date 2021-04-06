@@ -464,7 +464,7 @@
         pageNotesUi += "<span id='pageNotesContent'></span>";
         pageNotesUi += "</div></div>";
 
-        $('#pageNotesHost').html(pageNotesUi);
+        $('#pageNotesHost').append(pageNotesUi);
 
         if(!$axure.document.configuration.showAnnotations) {
             $('#pageNotesHost .pageNameHeader').css('padding-right', '55px');
