@@ -154,16 +154,26 @@ var openPreviousPage = $axure.player.openPreviousPage = function () {
         });
 
         var $vpContainer = $('#interfaceScaleListContainer');
+
+        if ($axure.player.zoomValues) {
+            var zoomValues = '';
+            $.each($axure.player.zoomValues, function(index, value ) {
+                zoomValues += '<div class="vpZoomValue" val='+value+' ><div class="zoomValue"></div>'+value+'%</div>';
+            });
+            $(zoomValues).appendTo('#scaleMenuContainer');
+            $('.vpZoomValue').click(vpZoomValue_click);
+        }
         
         var scaleOptions = '<div class="vpScaleOption" val="0"><div class="scaleRadioButton"><div class="selectedRadioButtonFill"></div></div>原始尺寸</div>';
         scaleOptions += '<div class="vpScaleOption" val="1"><div class="scaleRadioButton"><div class="selectedRadioButtonFill"></div></div>适应视窗宽度</div>';
         scaleOptions += '<div class="vpScaleOption" val="2"><div class="scaleRadioButton"><div class="selectedRadioButtonFill"></div></div>适应视窗高度</div>';
-        $(scaleOptions).appendTo($vpContainer);
-
-        $('#overflowMenuContainer').append('<div id="showHotspotsOption" class="showOption" style="order: 1"><div class="overflowOptionCheckbox"></div>交互元件高亮</div>');
-        $('#overflowMenuContainer').append($vpContainer);
+        scaleOptions += '<div class="vpScaleOption" val="3" hidden><div class="scaleRadioButton"><div class="selectedRadioButtonFill"></div></div>未启用</div>';
+        $(scaleOptions).appendTo($vpContainer);        
+        $('#scaleMenuContainer').append($vpContainer);
         $vpContainer.show();
 
+        $('#overflowMenuContainer').append('<div id="showHotspotsOption" class="showOption" style="order: 1"><div class="overflowOptionCheckbox"></div>高亮交互元件</div>');        
+        
         $('#showHotspotsOption').click(showHotspots_click);
         $('.vpScaleOption').click(vpScaleOption_click);
         $('.vpScaleOption').mouseup(function (event) {
@@ -447,6 +457,9 @@ var openPreviousPage = $axure.player.openPreviousPage = function () {
     function vpScaleOption_click(event) {
         var scaleCheckDiv = $(this).find('.scaleRadioButton');
         var scaleVal = $(this).attr('val');
+        if (scaleVal == '0') {
+            $axure.player.zoomPage(100);
+        }
         if (scaleCheckDiv.hasClass('selectedRadioButton')) return false;
 
         var $selectedScaleOption = $('.vpScaleOption[val="' + scaleVal + '"], .projectOptionsScaleRow[val="' + scaleVal + '"]');
@@ -463,6 +476,15 @@ var openPreviousPage = $axure.player.openPreviousPage = function () {
         }
 
         $axure.player.refreshViewPort();
+        $axure.player.closePopup();
+    }
+
+    function vpZoomValue_click() {
+        var scaleVal = $(this).attr('val');
+        $axure.player.selectScaleOption(3);
+        $axure.player.zoomPage(scaleVal);
+        
+        $axure.player.closePopup();
     }
 
     function search_input_keyup(event) {
